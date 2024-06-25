@@ -1,52 +1,46 @@
+import numpy as np
+from gym.spaces import Discrete
+
 class LineWorld:
     def __init__(self, length, start, goal):
-        """
-        Initialisation de l'environnement Line World.
-
-        :param length: Longueur de la ligne (nombre d'états)
-        :param start: État de départ (indice)
-        :param goal: État objectif (indice)
-        """
         self.length = length
         self.start = start
         self.goal = goal
         self.state = start
-        self.actions = ['LEFT', 'RIGHT']
+        self.observation_space = Discrete(length)
+        self.action_space = Discrete(2)
+        self.P = self._build_transition_matrix()
 
     def reset(self):
-        """
-        Réinitialise l'environnement à l'état de départ.
-
-        :return: État initial
-        """
         self.state = self.start
         return self.state
 
     def step(self, action):
-        """
-        Effectue une action et met à jour l'état de l'environnement.
+        if action == 0:  # Move left
+            next_state = max(0, self.state - 1)
+        elif action == 1:  # Move right
+            next_state = min(self.length - 1, self.state + 1)
+        else:
+            raise ValueError("Invalid action")
 
-        :param action: Action à effectuer ('LEFT' ou 'RIGHT')
-        :return: Tuple contenant le nouvel état, la récompense et un booléen indiquant si l'état objectif est atteint
-        """
-        if action == 'LEFT':
-            self.state = max(0, self.state - 1)
-        elif action == 'RIGHT':
-            self.state = min(self.length - 1, self.state + 1)
-        
-        reward = -1
-        done = False
-        if self.state == self.goal:
-            reward = 0
-            done = True
+        reward = -1 if next_state != self.goal else 0
+        done = next_state == self.goal
+        self.state = next_state
+        return next_state, reward, done, {}
 
-        return self.state, reward, done
+    def _build_transition_matrix(self):
+        P = {}
+        for state in range(self.length):
+            P[state] = {0: [], 1: []}
+            if state > 0:
+                P[state][0].append((1.0, state - 1, -1, state - 1 == self.goal))
+            else:
+                P[state][0].append((1.0, state, -1, state == self.goal))
+            if state < self.length - 1:
+                P[state][1].append((1.0, state + 1, -1, state + 1 == self.goal))
+            else:
+                P[state][1].append((1.0, state, -1, state == self.goal))
+        return P
 
     def render(self):
-        """
-        Affiche l'état actuel de l'environnement sous forme de ligne.
-        """
-        line = ['-'] * self.length
-        line[self.state] = 'A'  # Agent
-        line[self.goal] = 'G'   # Goal
-        print(''.join(line))
+        print(f"State: {self.state}")

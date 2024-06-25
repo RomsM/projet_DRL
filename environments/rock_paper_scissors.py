@@ -1,66 +1,46 @@
-import random
+import numpy as np
+from gym.spaces import Discrete
 
 class RockPaperScissors:
     def __init__(self):
-        self.actions = ['ROCK', 'PAPER', 'SCISSORS']
-        self.state = None
-        self.first_round_action = None
+        self.observation_space = Discrete(3)  # 3 states corresponding to Rock, Paper, Scissors
+        self.action_space = Discrete(3)  # Rock, Paper, Scissors
+        self.state = 0
+        self.P = self._build_transition_matrix()
 
-    def reset(self):
-        """
-        Réinitialise l'environnement à l'état initial.
-
-        :return: État initial
-        """
-        self.state = 'FIRST_ROUND'
-        self.first_round_action = None
-        return self.state
-
-    def step(self, action):
-        """
-        Effectue une action et met à jour l'état de l'environnement.
-
-        :param action: Action à effectuer ('ROCK', 'PAPER' ou 'SCISSORS')
-        :return: Tuple contenant le nouvel état, la récompense et un booléen indiquant si l'état final est atteint
-        """
-        if self.state == 'FIRST_ROUND':
-            opponent_action = random.choice(self.actions)
-            reward = self._get_reward(action, opponent_action)
-            self.first_round_action = action
-            self.state = 'SECOND_ROUND'
-            return self.state, reward, False
-
-        elif self.state == 'SECOND_ROUND':
-            opponent_action = self.first_round_action
-            reward = self._get_reward(action, opponent_action)
-            self.state = 'DONE'
-            return self.state, reward, True
+    def _build_transition_matrix(self):
+        P = {}
+        for state in range(self.observation_space.n):
+            P[state] = {a: [] for a in range(self.action_space.n)}
+            for action in range(self.action_space.n):
+                for opponent_action in range(self.action_space.n):
+                    next_state = opponent_action
+                    reward = self._get_reward(action, opponent_action)
+                    done = True
+                    prob = 1 / self.action_space.n  # opponent plays randomly
+                    P[state][action].append((prob, next_state, reward, done))
+        return P
 
     def _get_reward(self, action, opponent_action):
-        """
-        Calcule la récompense en fonction des actions de l'agent et de l'adversaire.
-
-        :param action: Action de l'agent
-        :param opponent_action: Action de l'adversaire
-        :return: Récompense (1 pour victoire, -1 pour défaite, 0 pour égalité)
-        """
         if action == opponent_action:
             return 0
-        elif (action == 'ROCK' and opponent_action == 'SCISSORS') or \
-             (action == 'PAPER' and opponent_action == 'ROCK') or \
-             (action == 'SCISSORS' and opponent_action == 'PAPER'):
+        elif (action == 0 and opponent_action == 2) or \
+             (action == 1 and opponent_action == 0) or \
+             (action == 2 and opponent_action == 1):
             return 1
         else:
             return -1
 
+    def reset(self):
+        self.state = np.random.choice([0, 1, 2])
+        return self.state
+
+    def step(self, action):
+        opponent_action = np.random.choice([0, 1, 2])
+        reward = self._get_reward(action, opponent_action)
+        self.state = opponent_action
+        done = True  # Each game consists of a single round
+        return self.state, reward, done, {}
+
     def render(self):
-        """
-        Affiche l'état actuel de l'environnement.
-        """
-        if self.state == 'FIRST_ROUND':
-            print("Premier round: choisissez ROCK, PAPER ou SCISSORS")
-        elif self.state == 'SECOND_ROUND':
-            print(f"Premier round terminé. Votre action: {self.first_round_action}.")
-            print("Deuxième round: choisissez ROCK, PAPER ou SCISSORS")
-        elif self.state == 'DONE':
-            print("Partie terminée.")
+        print(f"State: {self.state}")
