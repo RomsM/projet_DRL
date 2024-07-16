@@ -5,12 +5,12 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from environments.grid_world import GridWorld
-from algorithms.monte_carlo_es import MonteCarloES
+from algorithms.off_policy_mcc import OffPolicyMCC
 
-def test_monte_carlo_es():
+def test_off_policy_mcc():
     env = GridWorld(5, 5, (0, 0), (4, 4), [(1, 1), (2, 2), (3, 3)])
-    agent = MonteCarloES(env)
-    agent.train(num_episodes=100)  # Réduire le nombre d'épisodes pour les tests
+    agent = OffPolicyMCC(env)
+    agent.train(num_episodes=100)
     policy = agent.get_policy()
     action_value_function = agent.get_action_value_function()
 
@@ -21,4 +21,4 @@ def test_monte_carlo_es():
 
 # Exécuter le test
 if __name__ == "__main__":
-    test_monte_carlo_es()
+    test_off_policy_mcc()
