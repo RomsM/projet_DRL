@@ -1,42 +1,35 @@
 import numpy as np
-from collections import defaultdict
 
 class OnPolicyFirstVisitMCC:
-    def __init__(self, env, gamma=0.99, epsilon=0.1):
+    def __init__(self, env, gamma=1.0):
         self.env = env
         self.gamma = gamma
-        self.epsilon = epsilon
-        self.returns_sum = defaultdict(lambda: np.zeros(env.action_space.n))
-        self.returns_count = defaultdict(lambda: np.zeros(env.action_space.n))
-        self.Q = defaultdict(lambda: np.zeros(env.action_space.n))
-        self.policy = np.ones([env.observation_space.n, env.action_space.n]) / env.action_space.n
+        self.Q = np.zeros((env.observation_space_size, env.action_space_size))
+        self.returns = [[[] for _ in range(env.action_space_size)] for _ in range(env.observation_space_size)]
+        self.policy = np.zeros(env.observation_space_size, dtype=int)
 
     def generate_episode(self):
         episode = []
         state = self.env.reset()
-        while True:
-            action = np.random.choice(self.env.action_space.n, p=self.policy[state])
+        done = False
+        while not done:
+            action = np.random.choice(self.env.action_space)
             next_state, reward, done, _ = self.env.step(action)
             episode.append((state, action, reward))
-            if done:
-                break
             state = next_state
         return episode
 
     def train(self, num_episodes=1000):
-        for _ in range(num_episodes):
+        for i in range(num_episodes):
             episode = self.generate_episode()
+            states, actions, rewards = zip(*episode)
             G = 0
-            for t in reversed(range(len(episode))):
-                state, action, reward = episode[t]
-                G = self.gamma * G + reward
-                if not any((x[0] == state and x[1] == action) for x in episode[:t]):
-                    self.returns_sum[state][action] += G
-                    self.returns_count[state][action] += 1
-                    self.Q[state][action] = self.returns_sum[state][action] / self.returns_count[state][action]
-                    best_action = np.argmax(self.Q[state])
-                    self.policy[state] = self.epsilon / self.env.action_space.n
-                    self.policy[state][best_action] = 1 - self.epsilon + (self.epsilon / self.env.action_space.n)
+            for t in range(len(states) - 1, -1, -1):
+                G = self.gamma * G + rewards[t]
+                if (states[t], actions[t]) not in list(zip(states[:t], actions[:t])):
+                    self.returns[states[t]][actions[t]].append(G)
+                    self.Q[states[t], actions[t]] = np.mean(self.returns[states[t]][actions[t]])
+                    self.policy[states[t]] = np.argmax(self.Q[states[t]])
 
     def get_policy(self):
         return self.policy

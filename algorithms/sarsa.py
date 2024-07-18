@@ -1,24 +1,25 @@
 import numpy as np
 
-class SARSA:
-    def __init__(self, env, alpha=0.1, gamma=0.99, epsilon=0.1):
+class Sarsa:
+    def __init__(self, env, gamma=0.99, alpha=0.1, epsilon=0.1):
         self.env = env
-        self.alpha = alpha
         self.gamma = gamma
+        self.alpha = alpha
         self.epsilon = epsilon
-        self.Q = np.zeros([env.observation_space.n, env.action_space.n])
+        self.Q = np.zeros((env.observation_space_size, env.action_space_size))
 
     def choose_action(self, state):
         if np.random.rand() < self.epsilon:
-            return self.env.action_space.sample()
+            return np.random.choice(self.env.action_space)
         else:
             return np.argmax(self.Q[state])
 
     def train(self, num_episodes=1000):
-        for episode in range(num_episodes):
+        for i in range(num_episodes):
             state = self.env.reset()
             action = self.choose_action(state)
-            while True:
+            done = False
+            while not done:
                 next_state, reward, done, _ = self.env.step(action)
                 next_action = self.choose_action(next_state)
                 td_target = reward + self.gamma * self.Q[next_state, next_action]
@@ -26,16 +27,9 @@ class SARSA:
                 self.Q[state, action] += self.alpha * td_error
                 state = next_state
                 action = next_action
-                if done:
-                    break
-            print(f"Episode {episode + 1}/{num_episodes} terminé")
 
     def get_policy(self):
-        policy = np.zeros([self.env.observation_space.n, self.env.action_space.n])
-        for s in range(self.env.observation_space.n):
-            best_action = np.argmax(self.Q[s])
-            policy[s] = np.eye(self.env.action_space.n)[best_action]
-        return policy
+        return np.argmax(self.Q, axis=1)
 
     def get_action_value_function(self):
         return self.Q
