@@ -1,55 +1,56 @@
-import numpy as np
+from gym.spaces import Discrete
 
 class LineWorld:
-    def __init__(self, length, start, goal, step_reward=-0.01, goal_reward=1.0):
+    def __init__(self, length, start, goal):
         self.length = length
         self.start = start
         self.goal = goal
-        self.state = start
-        self.step_reward = step_reward
-        self.goal_reward = goal_reward
-        self.action_space = np.array([0, 1])  # 0: left, 1: right
-        self.action_space_size = len(self.action_space)  # For compatibility
-        self.observation_space = np.arange(length)
-        self.observation_space_size = len(self.observation_space)  # For compatibility
-        self.P = self._create_transition_probabilities()
-
-    def _create_transition_probabilities(self):
-        P = {}
-        for s in range(self.length):
-            P[s] = {a: [] for a in self.action_space}
-            for action in self.action_space:
-                next_state, reward, done = self._take_action(s, action)
-                prob = 1.0
-                P[s][action].append((prob, next_state, reward, done))
-        return P
-
-    def _take_action(self, state, action):
-        if action == 0:
-            next_state = max(0, state - 1)
-        elif action == 1:
-            next_state = min(self.length - 1, state + 1)
-
-        reward = self.step_reward
-        done = False
-        if next_state == self.goal:
-            reward = self.goal_reward
-            done = True
-
-        return next_state, reward, done
+        self.current_state = start
+        self.observation_space = Discrete(length)  # Ajouter l'attribut observation_space
+        self.action_space = Discrete(2)  # Ajouter l'attribut action_space pour 2 actions possibles (gauche, droite)
+        self.P = self._build_transition_probabilities()
 
     def reset(self):
         self.state = self.start
         return self.state
 
     def step(self, action):
-        next_state, reward, done = self._take_action(self.state, action)
-        self.state = next_state
+        if action == 0:  # gauche
+            self.state = max(0, self.state - 1)
+        elif action == 1:  # droite
+            self.state = min(self.length - 1, self.state + 1)
+
+        reward = -0.01
+        done = False
+        if self.state == self.goal:
+            reward = 1.0
+            done = True
+
         return self.state, reward, done, {}
 
     def render(self):
-        line = ['-'] * self.length
-        line[self.start] = 'A'
-        line[self.goal] = 'G'
-        line[self.state] = 'O'
-        print(''.join(line))
+        world = ['-'] * self.length
+        world[self.goal] = 'G'
+        world[self.state] = 'O'
+        print(''.join(world))
+
+    def _build_transition_probabilities(self):
+        P = {state: {action: [] for action in range(self.action_space.n)} for state in range(self.observation_space.n)}
+        for state in range(self.observation_space.n):
+            for action in range(self.action_space.n):
+                if action == 0:  # gauche
+                    next_state = max(0, state - 1)
+                else:  # droite
+                    next_state = min(self.length - 1, state + 1)
+                reward = 1.0 if next_state == self.goal else -0.01
+                done = next_state == self.goal
+                P[state][action].append((1.0, next_state, reward, done))
+        return P
+
+    @property
+    def observation_space_size(self):
+        return self.length
+
+    @property
+    def action_space_size(self):
+        return 2
