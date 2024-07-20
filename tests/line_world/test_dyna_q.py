@@ -23,11 +23,11 @@ def test_dyna_q():
     print(action_value_function)
 
     # Sauvegarde de la politique et des fonctions
-    agent.save('dyna_q_policy.npz')
+    agent.save('tests/line_world/policy/dyna_q_policy.npz')
     print("Politique et fonctions sauvegardées dans 'dyna_q_policy.npz'.")
 
     # Chargement de la politique et des fonctions
-    agent.load('dyna_q_policy.npz')
+    agent.load('tests/line_world/policy/dyna_q_policy.npz')
     loaded_policy = agent.get_policy()
     loaded_action_value_function = agent.get_action_value_function()
     print("Politique chargée:")

@@ -69,7 +69,7 @@ def main():
         logging.info(f"{name} - Total Reward: {total_reward}, Duration: {duration} seconds")
 
     # Sauvegarde des résultats
-    np.savez('experiment_results.npz', **results)
+    np.savez('tests/line_world/policy/experiment_results.npz', **results)
 
 if __name__ == "__main__":
     main()

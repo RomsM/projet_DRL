@@ -8,26 +8,24 @@ class Sarsa:
         self.epsilon = epsilon
         self.q_table = np.zeros((env.observation_space.n, env.action_space.n))
 
+    def choose_action(self, state):
+        if np.random.rand() < self.epsilon:
+            return self.env.action_space.sample()
+        else:
+            return np.argmax(self.q_table[state])
+
     def train(self, num_episodes):
         for _ in range(num_episodes):
             state = self.env.reset()
-            action = self.select_action(state)
+            action = self.choose_action(state)
             done = False
             while not done:
                 next_state, reward, done, _ = self.env.step(action)
-                next_action = self.select_action(next_state)
-                self.update_q_table(state, action, reward, next_state, next_action)
+                next_action = self.choose_action(next_state)
+                self.q_table[state, action] += self.alpha * (
+                    reward + self.gamma * self.q_table[next_state, next_action] - self.q_table[state, action]
+                )
                 state, action = next_state, next_action
-
-    def select_action(self, state):
-        if np.random.rand() < self.epsilon:
-            return self.env.action_space.sample()
-        return np.argmax(self.q_table[state])
-
-    def update_q_table(self, state, action, reward, next_state, next_action):
-        td_target = reward + self.gamma * self.q_table[next_state][next_action]
-        td_error = td_target - self.q_table[state][action]
-        self.q_table[state][action] += self.alpha * td_error
 
     def get_policy(self):
         return np.argmax(self.q_table, axis=1)
@@ -36,7 +34,8 @@ class Sarsa:
         return self.q_table
 
     def save(self, filename):
-        np.save(filename, self.q_table)
+        np.savez(filename, q_table=self.q_table)
 
     def load(self, filename):
-        self.q_table = np.load(filename)
+        data = np.load(filename)
+        self.q_table = data['q_table']

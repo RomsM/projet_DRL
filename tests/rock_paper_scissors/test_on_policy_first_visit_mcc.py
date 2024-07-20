@@ -5,38 +5,37 @@ import logging
 # Ajouter le chemin racine de votre projet au PYTHONPATH
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from environments.line_world import LineWorld
-from algorithms.policy_iteration import PolicyIteration
+from environments.rock_paper_scissors import RockPaperScissors
+from algorithms.on_policy_first_visit_mcc import OnPolicyFirstVisitMCC
 
-logging.basicConfig(level=logging.INFO)
-
-def test_policy_iteration():
+def test_on_policy_first_visit_mcc():
     logging.info("Initializing environment...")
-    env = LineWorld(length=10, start=0, goal=9)
+    env = RockPaperScissors()
     logging.info("Initializing agent...")
-    agent = PolicyIteration(env)
+    agent = OnPolicyFirstVisitMCC(env)
     logging.info("Starting training...")
-    agent.train()
+    agent.train(num_episodes=10000)
+    
     policy = agent.get_policy()
-    value_function = agent.get_value_function()
-
+    action_value_function = agent.get_action_value_function()
+    
     logging.info("Politique obtenue:")
     logging.info(policy)
-    logging.info("Fonction de valeur obtenue:")
-    logging.info(value_function)
+    logging.info("Fonction de valeur-action obtenue:")
+    logging.info(action_value_function)
 
     # Sauvegarde de la politique et des fonctions
-    agent.save('tests/line_world/policy/policy_iteration_policy.npz')
-    logging.info("Politique et fonctions sauvegardées dans 'policy_iteration_policy.npz'.")
+    agent.save('tests/rock_paper_scissors/policy/on_policy_first_visit_mcc_policy_rps.npz')
+    logging.info("Politique et fonctions sauvegardées dans 'on_policy_first_visit_mcc_policy_rps.npz'.")
 
     # Chargement de la politique et des fonctions
-    agent.load('tests/line_world/policy/policy_iteration_policy.npz')
+    agent.load('tests/rock_paper_scissors/policy/on_policy_first_visit_mcc_policy_rps.npz')
     loaded_policy = agent.get_policy()
-    loaded_value_function = agent.get_value_function()
+    loaded_action_value_function = agent.get_action_value_function()
     logging.info("Politique chargée:")
     logging.info(loaded_policy)
-    logging.info("Fonction de valeur chargée:")
-    logging.info(loaded_value_function)
+    logging.info("Fonction de valeur-action chargée:")
+    logging.info(loaded_action_value_function)
 
     # Démonstration de la politique
     logging.info("\nDémonstration de la politique:")
@@ -44,12 +43,14 @@ def test_policy_iteration():
     env.render()
     steps = 0
     max_steps = 100
-    while state != env.goal and steps < max_steps:
+    while steps < max_steps:
         action = policy[state]
         state, reward, done, _ = env.step(action)
         env.render()
         logging.info(f"Action: {action}, État: {state}, Récompense: {reward}")
         steps += 1
+        if done:
+            break
     if steps >= max_steps:
         logging.info("Limite de pas atteinte, la politique peut ne pas être optimale.")
 
@@ -59,10 +60,11 @@ def test_policy_iteration():
     env.render()
     done = False
     while not done:
-        action = int(input("Entrez l'action (0 pour gauche, 1 pour droite): "))
+        action = int(input("Entrez l'action (0 pour Rock, 1 pour Paper, 2 pour Scissors): "))
         state, reward, done, _ = env.step(action)
         env.render()
         logging.info(f"État: {state}, Récompense: {reward}")
 
 if __name__ == "__main__":
-    test_policy_iteration()
+    logging.basicConfig(level=logging.INFO)
+    test_on_policy_first_visit_mcc()

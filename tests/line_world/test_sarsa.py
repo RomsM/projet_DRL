@@ -24,11 +24,11 @@ def test_sarsa():
     print(action_value_function)
 
     # Sauvegarde de la politique et des fonctions
-    agent.save('sarsa_policy.npy')
-    print("Politique et fonctions sauvegardées dans 'sarsa_policy.npy'.")
+    agent.save('tests/line_world/policy/sarsa_policy.npz')
+    print("Politique et fonctions sauvegardées dans 'sarsa_policy.npz'.")
 
     # Chargement de la politique et des fonctions
-    agent.load('sarsa_policy.npy')
+    agent.load('tests/line_world/policy/sarsa_policy.npz')
     loaded_policy = agent.get_policy()
     loaded_action_value_function = agent.get_action_value_function()
     print("Politique chargée:")

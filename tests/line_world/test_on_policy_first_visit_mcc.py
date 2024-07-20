@@ -28,11 +28,11 @@ def test_on_policy_first_visit_mcc():
     logging.info(action_value_function)
 
     # Sauvegarde des résultats
-    agent.save('on_policy_first_visit_mcc_policy.npz')
+    agent.save('tests/line_world/policy/on_policy_first_visit_mcc_policy.npz')
     logging.info("Politique et fonctions sauvegardées dans 'on_policy_first_visit_mcc_policy.npz'.")
 
     # Chargement des résultats
-    agent.load('on_policy_first_visit_mcc_policy.npz')
+    agent.load('tests/line_world/policy/on_policy_first_visit_mcc_policy.npz')
     logging.info("Politique chargée:")
     logging.info(agent.get_policy())
     logging.info("Fonction de valeur-action chargée:")
