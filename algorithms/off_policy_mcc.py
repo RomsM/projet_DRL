@@ -1,5 +1,8 @@
 import numpy as np
 
+
+# Utilise une politique comportementale uniforme pour l'exploration
+# MAJ la fonction Q et la politique cible basée sur les épisodes générés.
 class OffPolicyMCC:
     def __init__(self, env, gamma=0.99):
         self.env = env

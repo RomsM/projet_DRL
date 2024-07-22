@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def analyze_results():
-    data = np.load('tests/rock_paper_scissors/policy/algorithm_performance_rps.npz', allow_pickle=True)
+    data = np.load(r'D:\projet_DRL\tests\rock_paper_scissors\policy\algorithm_performance_rps.npz', allow_pickle=True)
     algorithms = data.files
     rewards = []
     durations = []
@@ -35,7 +35,7 @@ def analyze_results():
     plt.tight_layout()
 
     # Sauvegarder la figure
-    plt.savefig('tests/rock_paper_scissors/algorithm_performance_comparison_rps.png')
+    plt.savefig('algorithm_performance_comparison_rps.png')
 
     # Afficher la figure
     plt.show()

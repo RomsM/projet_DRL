@@ -26,11 +26,11 @@ def test_policy_iteration():
     logging.info(value_function)
 
     # Sauvegarde de la politique et des fonctions
-    agent.save('tests/line_world/policy/policy_iteration_policy.npz')
+    agent.save(r'D:\projet_DRL\tests\line_world\policy\policy_iteration_policy.npz')
     logging.info("Politique et fonctions sauvegardées dans 'policy_iteration_policy.npz'.")
 
     # Chargement de la politique et des fonctions
-    agent.load('tests/line_world/policy/policy_iteration_policy.npz')
+    agent.load(r'D:\projet_DRL\tests\line_world\policy\policy_iteration_policy.npz')
     loaded_policy = agent.get_policy()
     loaded_value_function = agent.get_value_function()
     logging.info("Politique chargée:")

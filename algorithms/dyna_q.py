@@ -1,6 +1,7 @@
 import numpy as np
 import random
 
+
 class DynaQ:
     def __init__(self, env, alpha=0.1, gamma=0.99, epsilon=0.1, n_planning_steps=5):
         self.env = env
@@ -11,24 +12,28 @@ class DynaQ:
         self.q_table = np.zeros((env.observation_space.n, env.action_space.n))
         self.model = {}
 
+    # ε-greedy pour la sélection d'actions
     def choose_action(self, state):
         if random.uniform(0, 1) < self.epsilon:
             return self.env.action_space.sample()
         else:
             return np.argmax(self.q_table[state])
 
+    # MAJ of Q and the model based on real experience
     def learn(self, state, action, reward, next_state):
         best_next_action = np.argmax(self.q_table[next_state])
         td_target = reward + self.gamma * self.q_table[next_state][best_next_action]
         self.q_table[state][action] += self.alpha * (td_target - self.q_table[state][action])
         self.model[(state, action)] = (reward, next_state)
 
+    # MAJ supplém based on simulated experiences
     def planning(self):
         for _ in range(self.n_planning_steps):
             state, action = random.choice(list(self.model.keys()))
             reward, next_state = self.model[(state, action)]
             self.learn(state, action, reward, next_state)
 
+    # Train for num_episodes
     def train(self, num_episodes):
         for episode in range(num_episodes):
             state = self.env.reset()

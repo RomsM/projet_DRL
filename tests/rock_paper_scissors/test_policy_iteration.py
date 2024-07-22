@@ -25,11 +25,11 @@ def test_policy_iteration():
     logging.info(value_function)
 
     # Sauvegarde de la politique et des fonctions
-    agent.save('tests/rock_paper_scissors/policy/policy_iteration_policy_rps.npz')
+    agent.save(r'D:\projet_DRL\tests\rock_paper_scissors\policy\policy_iteration_policy_rps.npz')
     logging.info("Politique et fonctions sauvegardées dans 'policy_iteration_policy_rps.npz'.")
 
     # Chargement de la politique et des fonctions
-    agent.load('tests/rock_paper_scissors/policy/policy_iteration_policy_rps.npz')
+    agent.load(r'D:\projet_DRL\tests\rock_paper_scissors\policy\policy_iteration_policy_rps.npz')
     loaded_policy = agent.get_policy()
     loaded_value_function = agent.get_value_function()
     logging.info("Politique chargée:")

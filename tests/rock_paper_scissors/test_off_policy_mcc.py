@@ -25,11 +25,11 @@ def test_off_policy_mcc():
     logging.info(action_value_function)
 
     # Sauvegarde de la politique et des fonctions
-    agent.save('tests/rock_paper_scissors/policy/off_policy_mcc_policy_rps.npz')
+    agent.save(r'D:\projet_DRL\tests\rock_paper_scissors\policy\off_policy_mcc_policy_rps.npz')
     logging.info("Politique et fonctions sauvegardées dans 'off_policy_mcc_policy_rps.npz'.")
 
     # Chargement de la politique et des fonctions
-    agent.load('tests/rock_paper_scissors/policy/off_policy_mcc_policy_rps.npz')
+    agent.load(r'D:\projet_DRL\tests\rock_paper_scissors\policy\off_policy_mcc_policy_rps.npz')
     loaded_policy = agent.get_policy()
     loaded_action_value_function = agent.get_action_value_function()
     logging.info("Politique chargée:")

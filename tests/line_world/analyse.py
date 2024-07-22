@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def analyze_results():
     # Chargement des résultats
-    data = np.load('experiment_results.npz', allow_pickle=True)
+    data = np.load(r'D:\projet_DRL\tests\line_world\policy\experiment_results.npz', allow_pickle=True)
 
     algorithms = [
         'Dyna-Q',

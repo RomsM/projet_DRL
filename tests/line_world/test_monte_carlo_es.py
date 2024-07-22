@@ -29,11 +29,11 @@ def test_monte_carlo_es():
     print(action_value_function)
 
     # Sauvegarde de la politique et des fonctions
-    agent.save('tests/line_world/policy/monte_carlo_es_policy.npz')
+    agent.save(r'D:\projet_DRL\tests\line_world\policy\monte_carlo_es_policy.npz')
     print("Politique et fonctions sauvegardées dans 'monte_carlo_es_policy.npz'.")
 
     # Chargement de la politique et des fonctions
-    agent.load('tests/line_world/policy/monte_carlo_es_policy.npz')
+    agent.load(r'D:\projet_DRL\tests\line_world\policy\monte_carlo_es_policy.npz')
     loaded_policy = agent.get_policy()
     loaded_action_value_function = agent.get_action_value_function()
     print("Politique chargée:")

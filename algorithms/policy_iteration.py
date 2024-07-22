@@ -1,6 +1,9 @@
 import numpy as np
 import logging
 
+
+# Utilise un seuil (theta) pour déterminer la convergence.
+
 class PolicyIteration:
     def __init__(self, env, gamma=0.99, theta=1e-6):
         self.env = env
@@ -8,7 +11,7 @@ class PolicyIteration:
         self.theta = theta
         self.policy = np.zeros(env.observation_space.n, dtype=int)
         self.V = np.zeros(env.observation_space.n)
-    
+
     def policy_evaluation(self):
         while True:
             delta = 0
@@ -20,7 +23,7 @@ class PolicyIteration:
                 delta = max(delta, abs(v - self.V[state]))
             if delta < self.theta:
                 break
-    
+
     def policy_improvement(self):
         policy_stable = True
         for state in range(self.env.observation_space.n):
@@ -34,7 +37,7 @@ class PolicyIteration:
             if old_action != new_action:
                 policy_stable = False
         return policy_stable
-    
+
     def train(self):
         logging.info("Starting training...")
         iteration = 0
@@ -44,16 +47,16 @@ class PolicyIteration:
             self.policy_evaluation()
             if self.policy_improvement():
                 break
-    
+
     def get_policy(self):
         return self.policy
-    
+
     def get_value_function(self):
         return self.V
-    
+
     def save(self, filepath):
         np.savez(filepath, policy=self.policy, value_function=self.V)
-    
+
     def load(self, filepath):
         data = np.load(filepath)
         self.policy = data['policy']

@@ -25,11 +25,11 @@ def test_on_policy_first_visit_mcc():
     logging.info(action_value_function)
 
     # Sauvegarde de la politique et des fonctions
-    agent.save('tests/rock_paper_scissors/policy/on_policy_first_visit_mcc_policy_rps.npz')
+    agent.save(r'D:\projet_DRL\tests\rock_paper_scissors\policy\on_policy_first_visit_mcc_policy_rps.npz')
     logging.info("Politique et fonctions sauvegardées dans 'on_policy_first_visit_mcc_policy_rps.npz'.")
 
     # Chargement de la politique et des fonctions
-    agent.load('tests/rock_paper_scissors/policy/on_policy_first_visit_mcc_policy_rps.npz')
+    agent.load(r'D:\projet_DRL\tests\rock_paper_scissors\policy\on_policy_first_visit_mcc_policy_rps.npz')
     loaded_policy = agent.get_policy()
     loaded_action_value_function = agent.get_action_value_function()
     logging.info("Politique chargée:")

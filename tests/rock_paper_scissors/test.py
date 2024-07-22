@@ -65,7 +65,7 @@ def main():
                 "duration": None,
             }
 
-    np.savez("tests/rock_paper_scissors/policy/algorithm_performance_rps.npz", **results)
+    np.savez(r"D:\projet_DRL\tests\rock_paper_scissors\policy\algorithm_performance_rps.npz", **results)
 
 if __name__ == "__main__":
     main()

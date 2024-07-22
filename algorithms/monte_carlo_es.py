@@ -1,6 +1,7 @@
 import numpy as np
 import random
 
+
 class MonteCarloES:
     def __init__(self, env, gamma=0.99, epsilon=0.1):
         self.env = env
@@ -10,6 +11,7 @@ class MonteCarloES:
         self.returns = {(s, a): [] for s in range(env.observation_space.n) for a in range(env.action_space.n)}
         self.policy = np.zeros(env.observation_space.n, dtype=int)
 
+    # Creating an episode based on the actual policy
     def generate_episode(self):
         episode = []
         state = self.env.reset()
@@ -34,6 +36,7 @@ class MonteCarloES:
 
         return episode
 
+    # MAJ of policy and valu funct
     def train(self, num_episodes):
         for episode_num in range(num_episodes):
             print(f"Generating episode {episode_num + 1}/{num_episodes}...")

@@ -1,6 +1,9 @@
 import numpy as np
 import logging
 
+
+# Utilise une politique ε-soft pour l'exploration.
+# Met à jour la fonction Q et la politique basée sur la première visite de chaque paire état-action dans un épisode
 class OnPolicyFirstVisitMCC:
     def __init__(self, env, epsilon=0.1, gamma=1.0):
         self.env = env
